@@ -1,0 +1,32 @@
+config:
+  plugins:
+    fake-data: {}
+  debug: true
+  target: "http://localhost:8086"  # Update this with your actual service URL
+  phases:
+    - duration: 10
+      arrivalRate: 5
+      name: "Warm up phase"
+    - duration: 30
+      arrivalRate: 10
+      rampTo: 50
+      name: "Ramp up load"
+    - duration: 70
+      arrivalRate: 50
+      name: "Sustained load"
+  defaults:
+    headers:
+      Content-Type: "application/json"
+
+
+scenarios:
+  - name: "Create users with varying data"
+    flow:
+      - post:
+          url: "/user/"
+          json: 
+            id: '{{ $randomNumber(1, 100000000000) }}'
+            name: '{{ $randFullName() }}'
+            # signup_ts: '{{ $date(new Date(2019, 0, 1), new Date()) }}'
+            # # list integers
+            # friends: '{{ $randInt(1, 10) }}'
